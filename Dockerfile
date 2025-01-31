@@ -20,7 +20,7 @@ EXPOSE 80
 
 # Install dependencies
 RUN apk add --no-cache \
-    openldap-dev\
+    openldap-dev \
     libzip-dev \
     zip \
     freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev oniguruma-dev \
@@ -32,11 +32,10 @@ RUN apk add --no-cache \
     apache2-ctl \
     apache2-proxy
 
-
 ## Installing extensions ##
 # Running in a single command is worse for caching/build failures, but far better for image size
 RUN docker-php-ext-install \
-    mbstring exif pcntl pdo bcmath opcache ldap zip \
+    mysqli pdo_mysql mbstring exif pcntl pdo bcmath opcache ldap zip \
     && \
     docker-php-ext-enable zip \
     && \
@@ -47,7 +46,6 @@ RUN docker-php-ext-install \
       --with-jpeg \
     && \
     docker-php-ext-install gd
-
 
 ## Installing Leantime ##
 
@@ -73,6 +71,3 @@ COPY config/app.conf  /etc/apache2/conf.d/app.conf
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf && \
     sed -i 's#AllowOverride [Nn]one#AllowOverride All#' /etc/apache2/httpd.conf && \
     sed -i '$iLoadModule proxy_module modules/mod_proxy.so' /etc/apache2/httpd.conf
-
-
-
