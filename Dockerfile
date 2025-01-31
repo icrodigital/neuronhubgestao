@@ -27,10 +27,8 @@ RUN apk add --no-cache \
     icu-libs \
     jpegoptim optipng pngquant gifsicle \
     supervisor \
-    apache2 \
-    openssl \
-    apache2-ctl \
-    apache2-proxy
+    nginx \
+    openssl
 
 ## Installing extensions ##
 # Running in a single command is worse for caching/build failures, but far better for image size
@@ -66,11 +64,11 @@ COPY config/custom.ini /usr/local/etc/php/conf.d/custom.ini
 
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY config/app.conf  /etc/apache2/conf.d/app.conf
 
-RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf && \
-    sed -i 's#AllowOverride [Nn]one#AllowOverride All#' /etc/apache2/httpd.conf && \
-    sed -i '$iLoadModule proxy_module modules/mod_proxy.so' /etc/apache2/httpd.conf
-    
-RUN sed -i '/Content-Security-Policy/d' /etc/apache2/conf.d/app.conf
-RUN echo "Header set Content-Security-Policy \"default-src 'self'; img-src 'self' data: https://neuronhubgest-o-production.up.railway.app; style-src 'self' 'unsafe-inline' https://neuronhubgest-o-production.up.railway.app; style-src-elem 'self' 'unsafe-inline' https://neuronhubgest-o-production.up.railway.app; script-src 'self' 'unsafe-inline' https://neuronhubgest-o-production.up.railway.app https://unpkg.com;\"" >> /etc/apache2/httpd.conf
+# Configure Nginx
+COPY config/nginx.conf /etc/nginx/nginx.conf
+
+# Remove Apache configurations and add Nginx configurations
+RUN rm -rf /etc/apache2 && \
+    sed -i '/Content-Security-Policy/d' /etc/nginx/nginx.conf && \
+    echo "add_header Content-Security-Policy \"default-src 'self'; img-src 'self' data: https://neuronhubgest-o-production.up.railway.app; style-src 'self' 'unsafe-inline' https://neuronhubgest-o-production.up.railway.app; style-src-elem 'self' 'unsafe-inline' https://neuronhubgest-o-production.up.railway.app; script-src 'self' 'unsafe-inline' https://neuronhubgest-o-production.up.railway.app https://unpkg.com;\";" >> /etc/nginx/nginx.conf

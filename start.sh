@@ -1,6 +1,12 @@
 #!/bin/sh
 
+# Iniciar o Nginx em segundo plano
+nginx
+
+# Iniciar o PHP-FPM em primeiro plano
+php-fpm
 # Carregar variáveis de ambiente de arquivos, se existirem
+
 if [[ -n "${LEAN_DB_PASSWORD_FILE}" ]]; then
   LEAN_DB_PASSWORD=$(cat "${LEAN_DB_PASSWORD_FILE}")
   export LEAN_DB_PASSWORD
