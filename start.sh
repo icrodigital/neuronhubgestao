@@ -1,12 +1,6 @@
 #!/bin/sh
 
-# Iniciar o Nginx em segundo plano
-nginx
-
-# Iniciar o PHP-FPM em primeiro plano
-php-fpm
 # Carregar variáveis de ambiente de arquivos, se existirem
-
 if [[ -n "${LEAN_DB_PASSWORD_FILE}" ]]; then
   LEAN_DB_PASSWORD=$(cat "${LEAN_DB_PASSWORD_FILE}")
   export LEAN_DB_PASSWORD
@@ -59,5 +53,8 @@ if [[ -z "${LEAN_DB_HOST}" || -z "${LEAN_DB_USER}" || -z "${LEAN_DB_PASSWORD}" |
   exit 1
 fi
 
-# Iniciar o Apache e o PHP-FPM
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+# Iniciar o Nginx em segundo plano
+nginx
+
+# Iniciar o PHP-FPM em primeiro plano
+php-fpm
