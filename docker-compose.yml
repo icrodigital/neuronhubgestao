@@ -5,20 +5,20 @@ services:
     image: leantime/leantime:latest
     container_name: leantime
     restart: unless-stopped
-    env_file: ./.env                                        # Environment file with settings
+    env_file: ./.env  # Arquivo de variáveis de ambiente
     networks:
       - leantime-net
     volumes:
-      - public_userfiles:/var/www/html/public/userfiles     # Volume to store public files, logo etc
-      - userfiles:/var/www/html/userfiles                   # Volume to store private user uploaded files
-      - plugins:/var/www/html/app/Plugins                   # Uncomment if you are planning to use plugins from the marketplace
+      - public_userfiles:/var/www/html/public/userfiles  # Volume para arquivos públicos (logo, etc.)
+      - userfiles:/var/www/html/userfiles                # Volume para arquivos privados enviados pelos usuários
+      - plugins:/var/www/html/app/Plugins                # Volume para plugins (descomente se for usar plugins)
     ports:
-      - "${LEAN_PORT}:80"                                          # The port to expose and access Leantime
-    depends_on:
-      - leantime_db                                         # Don't start Leantime unless leantime_db is running
+      - "${LEAN_PORT}:80"  # Porta exposta para acessar o Leantime
+    # Remova o depends_on, já que não há mais um banco de dados interno
+    # depends_on:
+    #   - leantime_db
 
 volumes:
-  db_data:
   userfiles:
   public_userfiles:
   plugins:
